@@ -1,0 +1,33 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="loopback-service">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <?set ID={/id}?>
+    <?foreach {/device} ?>
+    <device>
+      <name>{name}</name>
+      <config>
+        <interface xmlns="urn:ios">
+          <Loopback>
+            <name>{$ID}</name>
+            <ip when="{ipv4}">
+              <address>
+                <primary>
+                  <address>{ipv4/address}</address>
+                  <mask>{ipv4/netmask}</mask>
+                </primary>
+              </address>
+            </ip>
+            <ipv6 when="{ipv6}">
+              <address>
+                <prefix-list>
+                  <prefix>{ipv6/address}</prefix>
+                </prefix-list>
+              </address>
+            </ipv6>
+          </Loopback>
+        </interface>
+      </config>
+    </device>
+    <?end?>
+  </devices>
+</config-template>

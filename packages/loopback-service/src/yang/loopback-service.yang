@@ -1,0 +1,76 @@
+module loopback-service {
+  namespace "http://com/example/loopbackservice";
+  prefix loopback-service;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  revision 2021-05-03 {
+    description "enhanced version";
+  }
+
+  revision 2021-04-23 {
+    description "Initial revision.";
+  }
+
+
+  list loopback-service {
+    key name;
+
+    uses ncs:service-data;
+    ncs:servicepoint "loopback-service";
+
+    leaf name {
+      type string {
+         pattern "[a-zA-Z0-9\\-_]+";
+      }
+    }
+
+    leaf id {
+       type uint16{
+        range "0..100";
+       }
+       default "100";
+    }
+
+    list device{
+        key name;
+
+        leaf name {
+          type leafref {
+            path "/ncs:devices/ncs:device/ncs:name";
+          }
+        }
+
+        container ipv4 {
+          presence "IPv4_configuration";
+
+          leaf address {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+
+          leaf netmask {
+             type inet:ipv4-address;
+             mandatory true;
+          }
+        }
+
+        container ipv6 {
+          presence "IPv6_configuration";
+
+          leaf address {
+            type inet:ipv6-address;
+            mandatory true;
+          }
+        }
+        must "ipv4 or ipv6" {
+            error-message "Please assign value for at least one of the fields : ipv6/address, ipv4/address";
+        }
+    }
+  }
+}
